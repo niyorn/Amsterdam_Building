@@ -1,5 +1,37 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
+html,body{
+    height: 100%;
+}
+
+.container {
+    background-color: red;
+    color: red;
+    height: 100vh;
+    width: 100vw;
+}
+
+.stations, .stations svg {
+    position: absolute;
+  }
+  
+  .stations svg {
+    width: 60px;
+    height: 20px;
+    padding-right: 100px;
+    font: 10px sans-serif;
+  }
+  
+  .stations circle {
+    fill: brown;
+    stroke: black;
+    stroke-width: 1.5px;
+  }
+
+  #map{
+      height: 100%;
+  }
