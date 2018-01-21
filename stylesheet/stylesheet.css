@@ -15,22 +15,11 @@ html,body{
     width: 100vw;
 }
 
-.stations, .stations svg {
-    position: absolute;
-  }
-  
-  .stations svg {
-    width: 60px;
-    height: 20px;
-    padding-right: 100px;
-    font: 10px sans-serif;
-  }
-  
-  .stations circle {
-    fill: brown;
-    stroke: black;
-    stroke-width: 1.5px;
-  }
+.house{
+    width: 50px;
+    height: 50px;
+    background-color: red;
+}
 
   #map{
       height: 100%;
