@@ -1,4 +1,12 @@
 var map;
+var buildingType = {
+    noData: "Geen Data",
+    social: "Sociaal huur woning",
+    middel: "Middel huur woning",
+    expensive: "Duur huur woning",
+    house: "Koop woning"
+}
+
 const year = 2019;
 
 function initMap() {
@@ -23,11 +31,15 @@ function loadBuildingData() {
                 info.LAT = d.LAT.replace(/,/g, '.');
                 info.LNG = d.LNG.replace(/,/g, '.');
                 info.buildYear = d.JAARBOUW
+                info.buildingType = [d.HUUR_SOC, d.HUUR_MIDDEL, d.HUUR_DUUR, d.KOOP];
                 info.buildingSocial = d.HUUR_SOC;
                 info.buildingAverage = d.HUUR_MIDDEL;
                 info.buildingExpensive = d.HUUR_DUUR;
-                info.projectID = d.PROJECTID;
                 info.buildingHouse = d.KOOP;
+                info.projectID = d.PROJECTID;
+
+
+                info.buildingType = checkTypeBuilding(info.buildingType, buildingType);
                 building.push(info);
             } else {
                 return
@@ -35,7 +47,6 @@ function loadBuildingData() {
         });
 
         createMarker(building);
-        checkTypeBuilding(building);
     });
 };
 
@@ -236,7 +247,6 @@ function initMapData(coordinateMarker) {
 
 
 function createMarker(data) {
-
     //Get the highest and lowest build year of the buildings
     var maxBuildYear = d3.max(data, function (d) {
         return +d.buildYear;
@@ -245,69 +255,185 @@ function createMarker(data) {
         return +d.buildYear;
     });
 
-    var lol = {
-        url: "assets/icon/test.png",
-        scaledSize: new google.maps.Size(12, 12)
-    }
-    var features = [];    
+    var features = [];
     //create marker
     data.forEach(function (d) {
         var coordinate = {};
-        coordinate.type = "info";
+        coordinate.buildingType = d.buildingType;
         coordinate.position = new google.maps.LatLng(d.LAT, d.LNG);
         coordinate.buildYear = d.buildYear;
         features.push(coordinate);
     });
-
     //From wich year do you want so see  the building build up.
     //For now we're choosing for 2017
-    var difference = maxBuildYear - year; 
+    var difference = maxBuildYear - year;
     var timelineYear = year;
     var yearCounter = year;
-    for (var i = 0; i < difference+1; i++) {
-        features.forEach(function (feature) {        
+    for (var i = 0; i < difference + 1; i++) {
+        features.forEach(function (feature) {
             if (feature.buildYear == timelineYear) {
                 var coordinate = feature.position;
-                setTimeout(() => {                  
-                insertMarker(i, coordinate);
-                }, 1000*i);
+                var buildingType = feature.buildingType;
+                setTimeout(() => {
+                    insertMarker(coordinate, buildingType);
+                }, 1000 * i);
             }
         });
-        
-        setTimeout(() => {                  
+
+        setTimeout(() => {
             d3.select(".year")
-            .text(yearCounter);
+                .text(yearCounter);
             yearCounter++;
-            }, 1000*i);
+        }, 1000 * i);
         timelineYear++;
     }
 
-    
+    var size = 0.7;
+    var svgPath = "M-20,0a20,20 0 1,0 40,0a20,20 0 1,0 -40,0";
+    var svgOpacity = 0.7;
+    var svgStrokeWeight = 0;
 
-    function insertMarker(time, coordinate) {     
-        var marker = new google.maps.Marker({
-                position: coordinate,
-                icon: lol,
-                map: map
-            })
+    var markerType = {
+        noData: {
+            path: svgPath,
+            fillColor: '#fff',
+            fillOpacity: svgOpacity,
+            strokeWeight: svgStrokeWeight,
+            scale: size
+        },
+        social: {
+            path: svgPath,
+            fillColor: '#FF0000',
+            fillOpacity: svgOpacity,
+            strokeWeight: svgStrokeWeight,
+            scale: size
+        },
+        middel: {
+            path: svgPath,
+            fillColor: '#f7f2',
+            fillOpacity: svgOpacity,
+            strokeWeight: svgStrokeWeight,
+            scale: size
+        },
+        expensive: {
+            path: svgPath,
+            fillColor: '#f2f',
+            fillOpacity: svgOpacity,
+            strokeWeight: svgStrokeWeight,
+            scale: size
+        },
+        house: {
+            path: svgPath,
+            fillColor: '#ff2',
+            fillOpacity: svgOpacity,
+            strokeWeight: svgStrokeWeight,
+            scale: size
         }
     }
 
-    function checkTypeBuilding(data){
-        
-        
-        data.forEach(function(d){
-            var countBuilding = [d.buildingSocial, d.buildingAverage, d.buildingExpensive, d.buildingHouse];
-            var maxIndex = d3.max(countBuilding, function(d,i, k) 
-            {   
-                console.log(i);
-                
-                return i;
-            });
 
-            console.log(maxIndex);
-            
-            
-        });
-        
+
+    function insertMarker(coordinate, buildingTypeParameter) {
+
+        var result;
+
+        console.log(buildingTypeParameter);
+
+
+        switch (buildingTypeParameter) {
+            case buildingType.noData:
+                {
+                    result = markerType.noData;
+                    break;
+                }
+            case buildingType.social:
+                {
+                    result = markerType.social;
+                    break;
+                }
+            case buildingType.middel:
+                {
+                    result = markerType.middel;
+                    break;
+                }
+            case buildingType.expensive:
+                {
+                    result = markerType.expensive;
+                    break;
+                }
+            case buildingType.house:
+                {
+                    result = markerType.house;
+                    break;
+                }
+        }
+
+
+
+        var marker = new google.maps.Marker({
+            position: coordinate,
+            icon: result,
+            map: map
+        })
     }
+}
+
+function checkTypeBuilding(data, buildingType) {
+    var buildingType;
+    var noData = 0;
+    var noDataCount;
+    buildingArrayHolder = data;
+    buildingArrayLenght = buildingArrayHolder.length;
+    var result;
+
+
+    buildingArrayHolder.forEach(function (d) {
+        if (d == 0) {
+            noData++;
+        }
+    });
+
+    if (noData == buildingArrayLenght) {
+        result = -1
+    } else {
+        var maxBuilding = d3.max(buildingArrayHolder, function (d) {
+            return d
+        });
+        result = buildingArrayHolder.findIndex(find);
+    }
+
+
+    function find(index) {
+        return index == maxBuilding;
+    }
+
+
+    switch (result) {
+        case -1:
+            {
+                result = buildingType.noData;
+                break;
+            }
+        case 0:
+            {
+                result = buildingType.social;
+                break;
+            }
+        case 1:
+            {
+                result = buildingType.middel;
+                break;
+            }
+        case 2:
+            {
+                result = buildingType.expensive;
+                break;
+            }
+        case 3:
+            {
+                result = buildingType.house;
+                break;
+            }
+    }
+    return result;
+}
