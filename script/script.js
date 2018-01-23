@@ -1,4 +1,5 @@
 var map;
+const year = 2019;
 
 function initMap() {
     initMapData();
@@ -16,21 +17,25 @@ function loadBuildingData() {
         //put all coordinate of the building in an array
         var building = [];
         data.forEach(function (d) {
-
-            if(d.JAARBOUW >= 2015){
+            if (d.JAARBOUW >= year) {
                 var info = {};
-            //replace is used because google maps use a dot for the coordination
-            info.LAT = d.LAT.replace(/,/g, '.');
-            info.LNG = d.LNG.replace(/,/g, '.');
-            info.buildYear = d.JAARBOUW
-            building.push(info);
-            }
-            else{
+                //replace is used because google maps use a dot for the coordination
+                info.LAT = d.LAT.replace(/,/g, '.');
+                info.LNG = d.LNG.replace(/,/g, '.');
+                info.buildYear = d.JAARBOUW
+                info.buildingSocial = d.HUUR_SOC;
+                info.buildingAverage = d.HUUR_MIDDEL;
+                info.buildingExpensive = d.HUUR_DUUR;
+                info.projectID = d.PROJECTID;
+                info.buildingHouse = d.KOOP;
+                building.push(info);
+            } else {
                 return
             }
         });
 
-        createMarker(building)
+        createMarker(building);
+        checkTypeBuilding(building);
     });
 };
 
@@ -42,7 +47,7 @@ function initMapData(coordinateMarker) {
             lat: 52.3697856,
             lng: 4.89738837
         },
-        zoom: 14,
+        zoom: 13,
         styles: [{
                 "elementType": "geometry",
                 "stylers": [{
@@ -231,26 +236,78 @@ function initMapData(coordinateMarker) {
 
 
 function createMarker(data) {
+
+    //Get the highest and lowest build year of the buildings
+    var maxBuildYear = d3.max(data, function (d) {
+        return +d.buildYear;
+    });
+    var minBuildYear = d3.min(data, function (d) {
+        return +d.buildYear;
+    });
+
     var lol = {
         url: "assets/icon/test.png",
         scaledSize: new google.maps.Size(12, 12)
     }
-    var features = [];
+    var features = [];    
     //create marker
     data.forEach(function (d) {
         var coordinate = {};
         coordinate.type = "info";
         coordinate.position = new google.maps.LatLng(d.LAT, d.LNG);
+        coordinate.buildYear = d.buildYear;
         features.push(coordinate);
     });
 
-    // Create markers.
-    features.forEach(function (feature) {
-        var marker = new google.maps.Marker({
-            position: feature.position,
-            icon: lol,
-            map: map
+    //From wich year do you want so see  the building build up.
+    //For now we're choosing for 2017
+    var difference = maxBuildYear - year; 
+    var timelineYear = year;
+    var yearCounter = year;
+    for (var i = 0; i < difference+1; i++) {
+        features.forEach(function (feature) {        
+            if (feature.buildYear == timelineYear) {
+                var coordinate = feature.position;
+                setTimeout(() => {                  
+                insertMarker(i, coordinate);
+                }, 1000*i);
+            }
         });
-    });
+        
+        setTimeout(() => {                  
+            d3.select(".year")
+            .text(yearCounter);
+            yearCounter++;
+            }, 1000*i);
+        timelineYear++;
+    }
+
     
-}
+
+    function insertMarker(time, coordinate) {     
+        var marker = new google.maps.Marker({
+                position: coordinate,
+                icon: lol,
+                map: map
+            })
+        }
+    }
+
+    function checkTypeBuilding(data){
+        
+        
+        data.forEach(function(d){
+            var countBuilding = [d.buildingSocial, d.buildingAverage, d.buildingExpensive, d.buildingHouse];
+            var maxIndex = d3.max(countBuilding, function(d,i, k) 
+            {   
+                console.log(i);
+                
+                return i;
+            });
+
+            console.log(maxIndex);
+            
+            
+        });
+        
+    }
