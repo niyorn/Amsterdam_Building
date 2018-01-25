@@ -161,6 +161,15 @@ function initMapData(coordinateMarker) {
         },
         {
           "featureType": "poi",
+          "elementType": "labels.text",
+          "stylers": [
+            {
+              "visibility": "off"
+            }
+          ]
+        },
+        {
+          "featureType": "poi",
           "elementType": "labels.text.fill",
           "stylers": [
             {
@@ -187,15 +196,6 @@ function initMapData(coordinateMarker) {
         },
         {
           "featureType": "poi.park",
-          "elementType": "labels.text",
-          "stylers": [
-            {
-              "visibility": "off"
-            }
-          ]
-        },
-        {
-          "featureType": "poi.park",
           "elementType": "labels.text.fill",
           "stylers": [
             {
@@ -216,7 +216,10 @@ function initMapData(coordinateMarker) {
           "elementType": "geometry",
           "stylers": [
             {
-              "color": "#ffffff"
+              "color": "#000000"
+            },
+            {
+              "weight": 2
             }
           ]
         },
@@ -225,7 +228,7 @@ function initMapData(coordinateMarker) {
           "elementType": "geometry.fill",
           "stylers": [
             {
-              "color": "#74788b"
+              "color": "#a7a7a7"
             },
             {
               "saturation": -65
@@ -234,12 +237,34 @@ function initMapData(coordinateMarker) {
               "lightness": 35
             },
             {
-              "weight": 2.5
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "featureType": "road",
+          "elementType": "geometry.stroke",
+          "stylers": [
+            {
+              "color": "#525252"
+            },
+            {
+              "weight": 5.5
+            }
+          ]
+        },
+        {
+          "featureType": "road",
+          "elementType": "labels.icon",
+          "stylers": [
+            {
+              "visibility": "off"
             }
           ]
         },
         {
           "featureType": "road.arterial",
+          "elementType": "labels",
           "stylers": [
             {
               "visibility": "off"
@@ -257,10 +282,33 @@ function initMapData(coordinateMarker) {
         },
         {
           "featureType": "road.highway",
+          "stylers": [
+            {
+              "color": "#5bc2d9"
+            },
+            {
+              "lightness": 5
+            },
+            {
+              "weight": 1.5
+            }
+          ]
+        },
+        {
+          "featureType": "road.highway",
           "elementType": "geometry",
           "stylers": [
             {
-              "color": "#dadada"
+              "color": "#2e2e2e"
+            }
+          ]
+        },
+        {
+          "featureType": "road.highway",
+          "elementType": "geometry.fill",
+          "stylers": [
+            {
+              "weight": 1
             }
           ]
         },
@@ -296,6 +344,14 @@ function initMapData(coordinateMarker) {
           "stylers": [
             {
               "color": "#9e9e9e"
+            }
+          ]
+        },
+        {
+          "featureType": "transit",
+          "stylers": [
+            {
+              "visibility": "off"
             }
           ]
         },
@@ -356,7 +412,7 @@ function initMapData(coordinateMarker) {
             }
           ]
         }
-      ]  ,
+      ],
         disableDefaultUI: true,
     });
 }
@@ -476,7 +532,6 @@ function createMarker(data) {
           }
         
     }
-
     insertLegend();
 
     function insertMarker(coordinate, buildingTypeParameter) {
@@ -510,11 +565,13 @@ function createMarker(data) {
                 }
         }
 
-
+        console.log(google.maps.Animation);
+        
 
         var marker = new google.maps.Marker({
             position: coordinate,
             icon: result,
+            animation: google.maps.Animation.jp,
             map: map
         })
     }
