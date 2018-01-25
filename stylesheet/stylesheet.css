@@ -1,7 +1,14 @@
+@font-face {
+    font-family: avenir;
+    src: url("../assets/font/AvenirBlack.ttf");
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: avenir;
+
 }
 
 html,body{
@@ -27,15 +34,41 @@ html,body{
 
 .info{
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 14%;
+    left: 4rem;
     z-index: 2;
     padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 }
 
 .info .year{
-    font-size: 12.7rem;
+    font-size: 6.4rem;
     font-weight: bold;
-    opacity: 0.4;
-    color: white;
+    opacity: 0.9;
+    color: black;
+}
+
+/*Legend*/
+
+.legenda-container{
+padding: 0.5rem;
+display: flex;
+flex-direction: column;
+}
+
+.legenda-container .sub-container{
+    display: flex;
+    margin-bottom: 0.7rem;
+    align-items: center;
+}
+
+.legenda-container div{
+    display: inline-block;
+}
+
+.legenda-container span{
+    display: inline-block;
+    margin-left: 0.4rem;
 }
