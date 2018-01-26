@@ -36088,19 +36088,5 @@
     "COORDS": "POLYGON((4.899736 52.357621,4.89965 52.357772,4.89953 52.357745,4.899556 52.357751,4.89963 52.357603,4.899736 52.357621))",
     "LNG": "4,899633",
     "LAT": "52,3576875"
-  },
-  {
-    "OBJECTNUMMER": 1204,
-    "PROJECTID": "Team3",
-    "PROJECTNAAM": "Hogeschool van Amsterdam",
-    "JAARBOUW": 2030,
-    "JAAROPL": 2032,
-    "OPDRACHTGEVER": "Team 5",
-     "HUUR_SOC": 0,
-    "HUUR_MIDDEL": 0,
-    "HUUR_DUUR": 0,
-    "KOOP": 100,
-    "LNG": "52.3708655",
-    "LAT": "4.9021169"
   }
 ]

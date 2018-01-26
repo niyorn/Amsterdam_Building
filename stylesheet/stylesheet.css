@@ -75,11 +75,14 @@ body {
 }
 
 /*tooltip*/
-
 .tooltip-container{
     padding: 0.2rem;
 }
 
 .tooltip-container .tooltip-titel span{
     font-size: 2rem;
+}
+
+.tooltip-container .oplevering{
+    margin-bottom: 0.4rem;
 }

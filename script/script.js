@@ -1,9 +1,9 @@
 var map;
 var buildingType = {
-  noData: "Geen Data",
+  noData: "Onbekend",
   social: "Sociaal huur woning",
   middel: "Middel huur woning",
-  expensive: "Duur huur woning",
+  expensive: "Dure huur woning",
   house: "Koop woning"
 }
 const year = 2019;
@@ -39,7 +39,6 @@ function loadBuildingData() {
         info.finishYear = d.JAAROPL;
         info.opdrachtGever = d.OPDRACHTGEVER;
         info.projectName = d.PROJECTNAAM;
-
         info.buildingType = checkTypeBuilding(info.buildingType, buildingType);
         building.push(info);
       } else {
@@ -349,8 +348,7 @@ function initMapData(coordinateMarker) {
   });
 }
 
-
-function createMarker(data, allData) {
+function createMarker(data) {
   //Get the highest and lowest build year of the buildings
   var maxBuildYear = d3.max(data, function (d) {
     return +d.buildYear;
@@ -358,6 +356,8 @@ function createMarker(data, allData) {
   var minBuildYear = d3.min(data, function (d) {
     return +d.buildYear;
   });
+
+  
 
   var features = [];
   //create marker
@@ -370,6 +370,10 @@ function createMarker(data, allData) {
     coordinate.projectName = d.projectName;
     coordinate.opdrachtGever = d.opdrachtGever;
     coordinate.projectId = d.projectID;
+    coordinate.social= d.buildingSocial;
+    coordinate.middel = d.buildingAverage;
+    coordinate.expensive = d.buildingExpensive;
+    coordinate.house = d.buildingHouse;
     features.push(coordinate);
   });
 
@@ -381,15 +385,20 @@ function createMarker(data, allData) {
   var yearCounter = year;
   for (var i = 0; i < difference + 1; i++) {
     features.forEach(function (feature) {
-      if (feature.buildYear == timelineYear) {
+      if (feature.buildYear == timelineYear) 
+      {
         var coordinate = feature.position;
         var buildingType = feature.buildingType;
         var finishYear = feature.finishYear;
         var projectName = feature.projectName;
         var opdrachtGever = feature.opdrachtGever;
-        var buildYear = feature.buildYear;   
+        var buildYear = feature.buildYear;
+        var social= feature.social;
+        var middel = feature.middel;
+        var expensive = feature.expensive;
+        var house = feature.house;   
         setTimeout(() => {
-          insertMarker(coordinate, buildingType,buildYear, finishYear, projectName, opdrachtGever);
+          insertMarker(coordinate, buildingType,buildYear, finishYear, projectName, opdrachtGever, social, middel,expensive, house);
         }, 1000 * i);
       }
     });
@@ -456,18 +465,15 @@ function createMarker(data, allData) {
   function insertLegend() {
 
     var legend = d3.select(".legenda-container");
-
     for (var i in buildingType) {
       var type = buildingType[i];
       var legendContainer = legend.append('div')
         .attr('class', 'sub-container');
-
       legendContainer.append('div')
         .attr('class', type)
         .style("height", "50px")
         .style("width", "50px")
         .style('background', svgColorBuilding[i]);
-
       legendContainer.append('span')
         .attr('class', type)
         .text(type);
@@ -476,7 +482,7 @@ function createMarker(data, allData) {
   }
   insertLegend();
 
-  function insertMarker(coordinate, buildingTypeParameter, buildYear, finishYear, projectName, opdrachtGever) {
+  function insertMarker(coordinate, buildingTypeParameter, buildYear, finishYear, projectName, opdrachtGever, social, middel, expensive, house) {
     var result;
     switch (buildingTypeParameter) {
       case buildingType.noData:
@@ -512,8 +518,14 @@ function createMarker(data, allData) {
     '</div>'+
     '<p>'+ "In opdracht van: "+ '<span>'+ projectName + '</span>' + '</p>'+
     '<p>'+ "Jaarbouw: "+ '<span>'+ buildYear + '</span>' + '</p>'+
-    '<p>'+ "Jaarbouw: "+ '<span>'+ finishYear + '</span>' + '</p>'
+    '<p class="oplevering">'+ "Oplevering: "+ '<span>'+ finishYear + '</span>' + '</p>'+
+    '<p>'+ "Sociaal huur woning: "+ '<span>'+ social + '</span>' + '</p>'+
+    '<p>'+ "Middel huur woning: "+ '<span>'+ middel + '</span>' + '</p>'+
+    '<p>'+ "Dure huur woning: "+ '<span>'+ expensive + '</span>' + '</p>'+
+    '<p>'+ "Koop woning: "+ '<span>'+ house + '</span>' + '</p>'+
     '</div>';
+
+
 
     var infowindow = new google.maps.InfoWindow({
       content: contentString
