@@ -72,5 +72,14 @@ body {
 .legenda-container span {
     display: inline-block;
     margin-left: 0.4rem;
-    >
+}
+
+/*tooltip*/
+
+.tooltip-container{
+    padding: 0.2rem;
+}
+
+.tooltip-container .tooltip-titel span{
+    font-size: 2rem;
 }

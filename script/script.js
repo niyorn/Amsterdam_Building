@@ -6,7 +6,6 @@ var buildingType = {
   expensive: "Duur huur woning",
   house: "Koop woning"
 }
-
 const year = 2019;
 
 function initMap() {
@@ -37,7 +36,9 @@ function loadBuildingData() {
         info.buildingExpensive = d.HUUR_DUUR;
         info.buildingHouse = d.KOOP;
         info.projectID = d.PROJECTID;
-
+        info.finishYear = d.JAAROPL;
+        info.opdrachtGever = d.OPDRACHTGEVER;
+        info.projectName = d.PROJECTNAAM;
 
         info.buildingType = checkTypeBuilding(info.buildingType, buildingType);
         building.push(info);
@@ -349,7 +350,7 @@ function initMapData(coordinateMarker) {
 }
 
 
-function createMarker(data) {
+function createMarker(data, allData) {
   //Get the highest and lowest build year of the buildings
   var maxBuildYear = d3.max(data, function (d) {
     return +d.buildYear;
@@ -365,8 +366,14 @@ function createMarker(data) {
     coordinate.buildingType = d.buildingType;
     coordinate.position = new google.maps.LatLng(d.LAT, d.LNG);
     coordinate.buildYear = d.buildYear;
+    coordinate.finishYear = d.finishYear;
+    coordinate.projectName = d.projectName;
+    coordinate.opdrachtGever = d.opdrachtGever;
+    coordinate.projectId = d.projectID;
     features.push(coordinate);
   });
+
+  
   //From wich year do you want so see  the building build up.
   //For now we're choosing for 2017
   var difference = maxBuildYear - year;
@@ -377,8 +384,12 @@ function createMarker(data) {
       if (feature.buildYear == timelineYear) {
         var coordinate = feature.position;
         var buildingType = feature.buildingType;
+        var finishYear = feature.finishYear;
+        var projectName = feature.projectName;
+        var opdrachtGever = feature.opdrachtGever;
+        var buildYear = feature.buildYear;   
         setTimeout(() => {
-          insertMarker(coordinate, buildingType);
+          insertMarker(coordinate, buildingType,buildYear, finishYear, projectName, opdrachtGever);
         }, 1000 * i);
       }
     });
@@ -465,8 +476,7 @@ function createMarker(data) {
   }
   insertLegend();
 
-  function insertMarker(coordinate, buildingTypeParameter) {
-
+  function insertMarker(coordinate, buildingTypeParameter, buildYear, finishYear, projectName, opdrachtGever) {
     var result;
     switch (buildingTypeParameter) {
       case buildingType.noData:
@@ -496,15 +506,32 @@ function createMarker(data) {
         }
     }
 
-    console.log(google.maps.Animation);
+    var contentString = '<div class="tooltip-container">'+
+    '<div class="tooltip-titel">'+
+    '<span>'+ projectName + '</span>' +
+    '</div>'+
+    '<p>'+ "In opdracht van: "+ '<span>'+ projectName + '</span>' + '</p>'+
+    '<p>'+ "Jaarbouw: "+ '<span>'+ buildYear + '</span>' + '</p>'+
+    '<p>'+ "Jaarbouw: "+ '<span>'+ finishYear + '</span>' + '</p>'
+    '</div>';
+
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+
 
 
     var marker = new google.maps.Marker({
       position: coordinate,
       icon: result,
       animation: google.maps.Animation.jp,
-      map: map
-    })
+      map: map,
+      labelClass: "test"
+    });
+
+    marker.addListener('click', function() {
+      infowindow.open(map, marker);
+    });
   }
 }
 
